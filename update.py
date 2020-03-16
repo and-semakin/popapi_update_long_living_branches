@@ -8,7 +8,10 @@ from contextlib import contextmanager
 repo = Path("~/git/popapi").expanduser()
 
 # long-living branch pattern
-long_living_branch = re.compile(r"RC_[\w.-]*|SB_[\w.-]*|master|live")
+long_living_branch = re.compile(
+    r"^RC_[\w.-]*$|^SB_[\w.-]*$|^master$|^live$",
+    re.MULTILINE,
+)
 
 
 def git(command: str) -> str:
@@ -34,7 +37,11 @@ def git_stash():
 
 
 # get list of long-living branches
-branches = git("branch -a")
+branches = git("branch -a").replace("remotes/origin/", "")
+branches = "\n".join([
+    branch.strip(" *")
+    for branch in branches.splitlines()
+])
 
 long_living_branches = sorted(set(
     re.findall(long_living_branch, branches)
