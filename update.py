@@ -25,7 +25,9 @@ def git_stash():
     stashed = result.startswith("Saved working directory")
     try:
         yield
-    finally:
+    except Exception:
+        raise
+    else:
         if stashed:
             print("Unstash local changes...")
             git("stash pop")
