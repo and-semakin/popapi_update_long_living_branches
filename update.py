@@ -37,11 +37,12 @@ def git_stash():
 
 
 # get list of long-living branches
-branches = git("branch -a").replace("remotes/origin/", "")
+branches = git("branch -a")
 branches = "\n".join([
     branch.strip(" *")
     for branch in branches.splitlines()
-])
+    if "origin" in branch
+]).replace("remotes/origin/", "")
 
 long_living_branches = sorted(set(
     re.findall(long_living_branch, branches)
